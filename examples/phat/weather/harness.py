@@ -21,36 +21,15 @@ Displays weather information for a given location.
 """)
 
 
-# # Query Dark Sky (https://darksky.net/) to scrape current weather data
-# def get_weather(address):
-#     coords = get_coords(address)
-#     weather = {}
-#     res = requests.get(
-#         "https://darksky.net/forecast/{}/uk212/en".format(",".join([str(c) for c in coords])))
-#     if res.status_code == 200:
-#         soup = BeautifulSoup(res.content, "lxml")
-#         curr = soup.find_all("span", "currently")
-#         weather["summary"] = curr[0].img["alt"].split()[0]
-#         weather["temperature"] = int(curr[0].find(
-#             "span", "summary").text.split()[0][:-1])
-#         press = soup.find_all("div", "pressure")
-#         weather["pressure"] = int(press[0].find("span", "num").text)
-#         return weather
-#     else:
-#         return weather
-
 from pyowm import OWM
 from pyowm.utils import timestamps
-
-# ---------- FREE API KEY examples ---------------------
-
 from pyowm.utils.config import get_default_config_for_subscription_type
 config_dict = get_default_config_for_subscription_type('free')
 owm = OWM('309fb812c9488f4eb0cf0eaa857567eb',config_dict)
 mgr = owm.weather_manager()
 observation = mgr.one_call(lat=37.76783042803676, lon=-122.42537156211634)
-w = observation.current
-t = observation.forecast_daily[0]
+w = observation.forecast_daily[0]
+t = observation.forecast_daily[1]
 
 # w.detailed_status         # 'clouds'
 # w.wind()                  # {'speed': 4.6, 'deg': 330}
