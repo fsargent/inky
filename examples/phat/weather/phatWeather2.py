@@ -97,15 +97,14 @@ def drawInky(today, tomorrow):
     # Dictionary to store the icons
     icons = {}
 
-    # build the dictionary 'icons'
+        # build the dictionary 'icons'
     for icon in glob.glob('weather-icons/*.png'):
         # format the file name down to the text we need
         # example: 'icon-fog.png' becomes 'fog'
         # and gets put in the libary
-        icon_name = icon.replace('.png', '')
+        icon_name = icon.replace('.png', '').split('/')[1]
         icon_image = Image.open(icon)
         icons[icon_name] = icon_image
-
 
     # Draw the current weather icon top in top right
     if today.weather_icon_name is not None:
