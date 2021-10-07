@@ -90,11 +90,10 @@ def drawInky(today, tomorrow):
     print(day_name)
 
     # draw today's date on left side below today's name
-    utc_dt = datetime(datetime.datetime.now(), tzinfo=pytz.utc)
-    day_month_year = datetime.date.strftime(utc_dt.astimezone(get_localzone()), '%y-%m-%d %I:%M')
-    dayDate = day_month_year
-    draw.text((3, 25), dayDate, inky_display.BLACK, dateFont)
-    print(dayDate)
+    utc_dt = datetime.datetime.now(pytz.utc)
+    day_month_year = datetime.date.strftime(utc_dt.astimezone(get_localzone()), '%y-%m-%d %I:%M%p')
+    draw.text((3, 25), day_month_year, inky_display.BLACK, dateFont)
+    print(day_month_year)
 
     # draw current temperature to right of day name and date
     draw.text((105, 3), '{0:.0f}'.format(today.temperature(
