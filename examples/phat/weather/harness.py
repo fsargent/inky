@@ -5,6 +5,8 @@ import glob
 import os
 import time
 from sys import exit
+from dotenv import load_dotenv
+load_dotenv()
 
 """
 To run this example on Python 2.x you should:
@@ -25,7 +27,7 @@ from pyowm import OWM
 from pyowm.utils import timestamps
 from pyowm.utils.config import get_default_config_for_subscription_type
 config_dict = get_default_config_for_subscription_type('free')
-owm = OWM('309fb812c9488f4eb0cf0eaa857567eb',config_dict)
+owm = OWM(os.getenv("OWM_API_KEY"),config_dict)
 mgr = owm.weather_manager()
 observation = mgr.one_call(lat=37.76783042803676, lon=-122.42537156211634)
 w = observation.forecast_daily[0]
