@@ -91,7 +91,7 @@ def drawInky(today, tomorrow):
 
     # draw today's date on left side below today's name
     utc_dt = datetime.datetime.now(pytz.utc)
-    day_month_year = datetime.date.strftime(utc_dt.astimezone(get_localzone()), '%y-%m-%d %I:%M%p')
+    day_month_year = datetime.date.strftime(utc_dt.astimezone(get_localzone()), '%Y-%m-%d %I:%M%p')
     draw.text((3, 25), day_month_year, inky_display.BLACK, dateFont)
     print(day_month_year)
 
