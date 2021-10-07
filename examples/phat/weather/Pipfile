@@ -13,6 +13,8 @@ beautifulsoup4 = "*"
 pillow = "*"
 pep8 = "*"
 pyowm = "*"
+pytz = "*"
+tzlocal = "*"
 
 [dev-packages]
 

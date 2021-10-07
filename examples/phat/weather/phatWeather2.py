@@ -6,6 +6,8 @@ import glob
 from inky import InkyPHAT
 from PIL import Image, ImageFont, ImageDraw
 import datetime
+import pytz
+from tzlocal import get_localzone # $ pip install tzlocal
 
 import textwrap
 
@@ -88,7 +90,8 @@ def drawInky(today, tomorrow):
     print(day_name)
 
     # draw today's date on left side below today's name
-    day_month_year = datetime.date.strftime(datetime.datetime.now(), '%y-%m-%d %H:%M')
+    utc_dt = datetime(datetime.datetime.now(), tzinfo=pytz.utc)
+    day_month_year = datetime.date.strftime(utc_dt.astimezone(get_localzone()), '%y-%m-%d %I:%M')
     dayDate = day_month_year
     draw.text((3, 25), dayDate, inky_display.BLACK, dateFont)
     print(dayDate)
