@@ -68,7 +68,7 @@ def drawInky(today, tomorrow):
         # and gets put in the libary
         icon_name = icon.replace('.png', '').split('/')[1]
         icon_image = Image.open(icon)
-        resized_image = icon_image.crop((20,20,20,20))
+        resized_image = icon_image.crop((15,15,85,85)).resize((50,50))
         icons[icon_name] = resized_image
 
     # Draw the current weather icon top in top right
@@ -122,7 +122,7 @@ def drawInky(today, tomorrow):
     print(tomorrow.detailed_status)
 
     # Save the image so you can see it on the terminal
-    img.save('./image.png', 'png')
+    img.save('./image.png', 'PNG')
 
     # set up the image to push it
     inky_display.set_image(img)
