@@ -3,7 +3,7 @@
 # for the Dark Sky API https://github.com/lukaskubis/darkskylib
 
 import glob
-from inky.auto import auto
+from inky import InkyPHAT
 from PIL import Image, ImageFont, ImageDraw
 import datetime
 from datetime import date, timedelta
@@ -11,7 +11,8 @@ import textwrap
 
 # Set up the display
 try:
-    inky_display = auto(ask_user=True, verbose=True)
+    # inky_display = auto(ask_user=True, verbose=True)
+    inky_display = InkyPHAT('red')
 except TypeError:
     raise TypeError("You need to update the Inky library to >= v1.1.0")
 
@@ -21,6 +22,7 @@ if inky_display.resolution not in ((212, 104), (250, 122)):
     raise RuntimeError("This example does not support {}x{}".format(w, h))
 
 inky_display.set_border(inky_display.RED)
+
 
 def drawInky(today, tomorrow):
     # w.detailed_status         # 'clouds'
@@ -49,38 +51,61 @@ def drawInky(today, tomorrow):
     smallFont = ImageFont.truetype('fonts/ElecSign.ttf', 8)
     smallestFont = ImageFont.truetype('fonts/ElecSign.ttf', 7)
 
-
     # define weekday text
-    weekday = date.today()
-    day_Name = date.strftime(weekday, '%A')
-    day_month_year = date.strftime(weekday, '%-d %B %y')
+    day_month_year = date.strftime(date.today(), '%-d %B %y %H:%M')
 
     weekday2 = datetime.date.today() + datetime.timedelta(days=1)
     day2 = date.strftime(weekday2, '%A')
 
     # format the summary texts for today and tomorrow
     currentCondFormatted = textwrap.fill(today.detailed_status, 16)
-    summary2Formatted = textwrap.fill(today.detailed_status, 18)
+
+    # prepare to draw the icon on the upper right side of the screen
+    # Dictionary to store the icons
+    icons = {}
+
+    # build the dictionary 'icons'
+    for icon in glob.glob('weather-icons/*.png'):
+        # format the file name down to the text we need
+        # example: 'icon-fog.png' becomes 'fog'
+        # and gets put in the libary
+        icon_name = icon.replace('.png', '').split('/')[1]
+        icon_image = Image.open(icon)
+        resized_image = icon_image.resize((49, 49))
+        icons[icon_name] = resized_image
+
+    # Draw the current weather icon top in top right
+    if today.weather_icon_name is not None:
+        print(today.weather_icon_name)
+        img.paste(icons[today.weather_icon_name], (162, 0))
+    else:
+        draw.text((140, 10), '?', inky_display.RED, dayFont)
 
     # draw some lines to box out tomorrow's forecast
-    draw.line((118, 50, 118, 104),2, 4)
-    draw.line((118, 50, 212, 50),2, 4)
+    draw.line((118, 50, 118, 104), 2, 4)
+    draw.line((118, 50, 212, 50), 2, 4)
 
-    # draw today's name on top left side
-    draw.text((3, 3), day_Name, inky_display.BLACK, dayFont)
+    # draw the current day on top left side
+    day_name = date.strftime(date.today(), '%A')
+    draw.text((3, 3), day_name, inky_display.BLACK, dayFont)
+    print(day_name)
 
     # draw today's date on left side below today's name
     dayDate = day_month_year
     draw.text((3, 25), dayDate, inky_display.BLACK, dateFont)
     print(dayDate)
 
-    #draw current temperature to right of day name and date
-    draw.text((105, 3), '{0:.0f}'.format(today.temperature('fahrenheit')['day']) + '°F', inky_display.BLACK, tempFont)
-    draw.text((105, 34), '{0:.0f}'.format(today.temperature('celsius')['day']) + ' C', inky_display.BLACK, font)
+    # draw current temperature to right of day name and date
+    draw.text((105, 3), '{0:.0f}'.format(today.temperature(
+        'fahrenheit')['day']) + '°F', inky_display.BLACK, tempFont)
+    draw.text((105, 34), '{0:.0f}'.format(today.temperature(
+        'celsius')['day']) + ' C', inky_display.BLACK, font)
     print('{0:.0f}'.format(today.temperature('fahrenheit')['day']) + '°F')
     print('{0:.0f}'.format(today.temperature('celsius')['day']) + '°C')
 
-    tempsToday = 'High ' + '{0:.0f}'.format(today.temperature('fahrenheit')['max']) + ' Low ' + '{0:.0f}'.format(today.temperature('fahrenheit')['min'])
+    tempsToday = 'High ' + '{0:.0f}'.format(
+        today.temperature('fahrenheit')['max']) + ' Low ' + '{0:.0f}'.format(
+            today.temperature('fahrenheit')['min'])
     draw.text((3, 45), tempsToday, inky_display.BLACK, font)
     print(tempsToday)
 
@@ -91,32 +116,15 @@ def drawInky(today, tomorrow):
     # draw tomorrow's forecast in lower right box
     draw.text((125, 55), day2, inky_display.BLACK, font)
     print("\nTomorrow: ", day2)
-    draw.text((125, 66), '{0:.0f}'.format(tomorrow.temperature('fahrenheit')['day']) + 'F', inky_display.BLACK, smallFont)
+    draw.text((125, 66), '{0:.0f}'.format(tomorrow.temperature(
+        'fahrenheit')['day']) + 'F', inky_display.BLACK, smallFont)
     print('{0:.0f}'.format(tomorrow.temperature('fahrenheit')['day']) + '°C')
-    draw.text((125, 77), tomorrow.detailed_status, inky_display.BLACK, smallestFont)
+    draw.text((125, 77), tomorrow.detailed_status,
+              inky_display.BLACK, smallestFont)
     print(tomorrow.detailed_status)
 
-    # prepare to draw the icon on the upper right side of the screen
-    # Dictionary to store the icons
-    icons = {}
-
-        # build the dictionary 'icons'
-    for icon in glob.glob('weather-icons/*.png'):
-        # format the file name down to the text we need
-        # example: 'icon-fog.png' becomes 'fog'
-        # and gets put in the libary
-        icon_name = icon.replace('.png', '').split('/')[1]
-        icon_image = Image.open(icon)
-        resized_image = icon_image.resize((49,49))
-        icons[icon_name] = resized_image
-
-    # Draw the current weather icon top in top right
-    if today.weather_icon_name is not None:
-        print(today.weather_icon_name)
-        img.paste(icons[today.weather_icon_name], (162, 0))
-    else:
-        draw.text((140, 10), '?', inky_display.RED, dayFont)
-
+    # Save the image so you can see it on the terminal
+    img.save('./image.png', 'png')
 
     # set up the image to push it
     inky_display.set_image(img)
