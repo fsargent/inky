@@ -6,7 +6,7 @@ import glob
 from inky import InkyPHAT
 from PIL import Image, ImageFont, ImageDraw
 import datetime
-from datetime import date, timedelta
+
 import textwrap
 
 # Set up the display
@@ -51,11 +51,8 @@ def drawInky(today, tomorrow):
     smallFont = ImageFont.truetype('fonts/ElecSign.ttf', 8)
     smallestFont = ImageFont.truetype('fonts/ElecSign.ttf', 7)
 
-    # define weekday text
-    day_month_year = date.strftime(date.today(), '%-d %B %y %H:%M')
-
     weekday2 = datetime.date.today() + datetime.timedelta(days=1)
-    day2 = date.strftime(weekday2, '%A')
+    day2 = datetime.date.strftime(weekday2, '%A')
 
     # format the summary texts for today and tomorrow
     currentCondFormatted = textwrap.fill(today.detailed_status, 16)
@@ -71,7 +68,7 @@ def drawInky(today, tomorrow):
         # and gets put in the libary
         icon_name = icon.replace('.png', '').split('/')[1]
         icon_image = Image.open(icon)
-        resized_image = icon_image.resize((49, 49))
+        resized_image = icon_image.crop((20,20,20,20))
         icons[icon_name] = resized_image
 
     # Draw the current weather icon top in top right
@@ -86,22 +83,23 @@ def drawInky(today, tomorrow):
     draw.line((118, 50, 212, 50), 2, 4)
 
     # draw the current day on top left side
-    day_name = date.strftime(date.today(), '%A')
+    day_name = datetime.date.strftime(datetime.date.today(), '%A')
     draw.text((3, 3), day_name, inky_display.BLACK, dayFont)
     print(day_name)
 
     # draw today's date on left side below today's name
+    day_month_year = datetime.date.strftime(datetime.datetime.now(), '%y-%m-%d %H:%M')
     dayDate = day_month_year
     draw.text((3, 25), dayDate, inky_display.BLACK, dateFont)
     print(dayDate)
 
     # draw current temperature to right of day name and date
     draw.text((105, 3), '{0:.0f}'.format(today.temperature(
-        'fahrenheit')['day']) + '°F', inky_display.BLACK, tempFont)
-    draw.text((105, 34), '{0:.0f}'.format(today.temperature(
-        'celsius')['day']) + ' C', inky_display.BLACK, font)
+        'fahrenheit')['day']) + '°F', inky_display.BLACK, dayFont)
+    # draw.text((105, 34), '{0:.0f}'.format(today.temperature(
+        # 'celsius')['day']) + ' C', inky_display.BLACK, font)
     print('{0:.0f}'.format(today.temperature('fahrenheit')['day']) + '°F')
-    print('{0:.0f}'.format(today.temperature('celsius')['day']) + '°C')
+    # print('{0:.0f}'.format(today.temperature('celsius')['day']) + '°C')
 
     tempsToday = 'High ' + '{0:.0f}'.format(
         today.temperature('fahrenheit')['max']) + ' Low ' + '{0:.0f}'.format(

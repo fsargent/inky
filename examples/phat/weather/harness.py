@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-import glob
 import os
-import time
 from sys import exit
 from dotenv import load_dotenv
 load_dotenv()
